@@ -57,8 +57,8 @@ class DateType extends AbstractType
 
         if ('single_text' === $options['widget']) {
             $builder->addViewTransformer(new DateTimeToLocalizedStringTransformer(
-                'UTC',
-                'UTC',
+                $options['model_timezone'],
+                $options['model_timezone'],
                 $dateFormat,
                 $timeFormat,
                 $calendar,
@@ -105,7 +105,7 @@ class DateType extends AbstractType
                 ->add('month', $options['widget'], $monthOptions)
                 ->add('day', $options['widget'], $dayOptions)
                 ->addViewTransformer(new DateTimeToArrayTransformer(
-                    'UTC', 'UTC', array('year', 'month', 'day')
+                    $options['model_timezone'], $options['model_timezone'], array('year', 'month', 'day')
                 ))
                 ->setAttribute('formatter', $formatter)
             ;
@@ -113,15 +113,15 @@ class DateType extends AbstractType
 
         if ('string' === $options['input']) {
             $builder->addModelTransformer(new ReversedTransformer(
-                new DateTimeToStringTransformer('UTC', 'UTC', 'Y-m-d')
+                new DateTimeToStringTransformer($options['model_timezone'], $options['model_timezone'], 'Y-m-d')
             ));
         } elseif ('timestamp' === $options['input']) {
             $builder->addModelTransformer(new ReversedTransformer(
-                new DateTimeToTimestampTransformer('UTC', 'UTC')
+                new DateTimeToTimestampTransformer($options['model_timezone'], $options['model_timezone'])
             ));
         } elseif ('array' === $options['input']) {
             $builder->addModelTransformer(new ReversedTransformer(
-                new DateTimeToArrayTransformer('UTC', 'UTC', array('year', 'month', 'day'))
+                new DateTimeToArrayTransformer($options['model_timezone'], $options['model_timezone'], array('year', 'month', 'day'))
             ));
         }
     }
@@ -208,7 +208,6 @@ class DateType extends AbstractType
             'input' => 'datetime',
             'format' => $format,
             'model_timezone' => null,
-            'view_timezone' => null,
             'empty_value' => $emptyValue, // deprecated
             'placeholder' => $placeholder,
             'html5' => true,
